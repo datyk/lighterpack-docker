@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    image: lighterpack:latest
+    container_name: lighterpack-app
+    restart: unless-stopped
+    ports:
+      - "8080:3000"
+    depends_on:
+      - mongo
+    volumes:
+      - ./config/local.json:/app/config/local.json:ro
+    networks:
+      - lighterpack-net
+
+  mongo:
+    image: mongo:7
+    container_name: lighterpack-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - lighterpack-net
+
+volumes:
+  mongo_data:
+
+networks:
+  lighterpack-net:
