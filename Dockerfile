@@ -4,25 +4,22 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Clone the LighterPack source
-RUN apk add --no-cache git && \
+RUN apk add --no-cache git python3 make g++ && \
     git clone --depth 1 https://github.com/galenmaly/lighterpack.git .
 
-# Install all dependencies (including devDependencies for webpack build)
+# Install all dependencies
 RUN npm install
 
 # Build the webpack frontend bundle
 RUN npx webpack-cli --config ./webpack.config.js
 
-# Stage 2: Production image
+# Stage 2: Production image (keep all deps since app.js requires webpack at runtime)
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy source from builder
+# Copy everything from builder (including node_modules)
 COPY --from=builder /app .
-
-# Remove devDependencies to slim down
-RUN npm prune --production
 
 EXPOSE 3000
 
