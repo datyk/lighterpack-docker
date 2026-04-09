@@ -13,7 +13,7 @@ RUN npm install
 # Build the webpack frontend bundle
 RUN npx webpack-cli --config ./webpack.config.js
 
-# Stage 2: Production image (keep all deps since app.js requires webpack at runtime)
+# Stage 2: Production image
 FROM node:18-alpine
 
 WORKDIR /app
@@ -23,4 +23,5 @@ COPY --from=builder /app .
 
 EXPOSE 3000
 
+ENTRYPOINT []
 CMD ["node", "app.js"]
